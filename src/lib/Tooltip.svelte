@@ -3,7 +3,6 @@
   export let y;
   export let data;
   export let key;
-  export let point;
   export let selected = false;
 
   function capitalize(s) {

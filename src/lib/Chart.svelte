@@ -318,8 +318,8 @@
   let vline = {};
   $: vline.y1 = 0;
   $: vline.y2 = height - margin.bottom;
-  $: vline.x1 = xScale1(point?.startDate);
-  $: vline.x2 = xScale1(point?.startDate);
+  $: vline.x1 = (point && xScale1(point?.startDate)) ?? xScale1(data[0]?.startDate);
+  $: vline.x2 = (point && xScale1(point?.startDate)) ?? xScale1(data[0]?.startDate);
 </script>
 
 <main bind:clientWidth={width}>
@@ -525,7 +525,7 @@
       <TooltipLine {vline} />
       {#each attributes as attribute, i}
         <TooltipPoint
-          x={xScale1(point?.startDate)}
+          x={(point && xScale1(point?.startDate)) ?? xScale1(data[0]?.startDate)}
           y={yScale1(point && point[attribute])}
           selected={selected === attribute}
         />
@@ -538,7 +538,6 @@
         y={yScale1(point && point[attribute])}
         data={point && point[attribute]}
         key={attribute}
-        {point}
         selected={attribute === selected}
       />
     {/each}
@@ -559,41 +558,9 @@
   .chart,
   h2,
   p {
-    /* width: 100%; */
-    /* max-width: 500px; */
     margin-left: auto;
     margin-right: auto;
-    /* position: absolute; */
     position: relative;
-  }
-
-  svg {
-    /* width: 100%; */
-    /* height: 200px; */
-    overflow: visible;
-  }
-
-  .tick {
-    font-size: 0.725em;
-    font-weight: 200;
-  }
-
-  .tick line {
-    stroke: #888;
-    stroke-dasharray: 2;
-  }
-
-  .tick text {
-    fill: #888;
-    text-anchor: start;
-  }
-
-  .tick.tick-0 line {
-    stroke-dasharray: 0;
-  }
-
-  .x-axis .tick text {
-    text-anchor: middle;
   }
 
   .line {
@@ -603,90 +570,55 @@
     fill: none;
   }
 
-  /* ['#DDA0DD', '#B0C4DE', '#20B2AA', '#168AD0', '#F1683C', '#DBDC25', '#8FBC8B', '#D2B48C'] */
   .path-line1 {
     stroke: rgb(221, 160, 221, 0.2);
   }
   .path-area1 {
     fill: rgb(221, 160, 221, 0.6);
   }
-  #path-area1:hover {
-    fill: rgb(221, 160, 221, 0.4);
-  }
-
-  .path-line2 {
+   .path-line2 {
     stroke: rgb(176, 196, 222, 0.2);
   }
   .path-area2 {
     fill: rgb(176, 196, 222);
   }
-  #path-area2:hover {
-    fill: rgb(176, 196, 222, 0.4);
-  }
-
+ 
   .path-line3 {
-    /* stroke: rgb(32, 178, 170); */
     stroke: rgb(255, 199, 0, 0.2);
   }
   .path-area3 {
-    /* fill: rgb(32, 178, 170, 0.2); */
     fill: rgb(255, 199, 0);
   }
-  #path-area3:hover {
-    fill: rgb(32, 178, 170, 0.4);
-  }
-
   .path-line4 {
     stroke: rgb(109, 41, 50, 0.2);
   }
   .path-area4 {
     fill: rgb(109, 41, 50);
   }
-  #path-area4:hover {
-    fill: rgb(22, 138, 208, 0.2);
-  }
-
   .path-line5 {
     stroke: rgb(241, 104, 60, 0.2);
   }
   .path-area5 {
     fill: rgb(241, 104, 60);
   }
-  #path-area5:hover {
-    fill: rgb(241, 104, 60, 0.4);
-  }
-
   .path-line6 {
     stroke: rgb(22, 138, 208, 0.2);
   }
   .path-area6 {
     fill: rgb(22, 138, 208);
   }
-  #path-area6:hover {
-    fill: rgb(22, 138, 208, 0.4);
-  }
-
   .path-line7 {
     stroke: rgb(79, 207, 67, 0.2);
   }
   .path-area7 {
     fill: rgb(79, 207, 67);
   }
-  #path-area7:hover {
-    fill: rgb(143, 188, 139, 0.4);
-  }
-
   .path-line8 {
     stroke: rgb(192, 139, 92, 0.2);
   }
   .path-area8 {
     fill: rgb(192, 139, 92);
   }
-
-  #path-area8:hover {
-    fill: rgb(210, 180, 140, 0.4);
-  }
-
   .opacity {
     opacity: 0.7;
   }
