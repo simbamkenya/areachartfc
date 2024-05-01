@@ -30,4 +30,5 @@
     pointer-events: none;
     font-size: 0.875em;
   }
+  
 </style>

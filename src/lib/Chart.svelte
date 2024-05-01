@@ -7,15 +7,17 @@
   import { axisLeft, axisBottom } from "d3-axis";
   import _ from "lodash";
   import { format } from "d3-format";
+  import {timeFormat} from "https://cdn.skypack.dev/d3-time-format@4";
 
   import TooltipLine from "./TooltipLine.svelte";
   import TooltipPoint from "./TooltipPoint.svelte";
   import Tooltip from "./Tooltip.svelte";
-  //import Test from "./Test.svelte";
 
   function capitalize(s) {
     return s[0].toUpperCase() + s.slice(1);
   }
+
+  $: console.log('timmee', timeFormat)
 
   let data = [];
   let colors = [
@@ -29,7 +31,19 @@
     "#D2B48C",
   ];
 
+  let boxColors = [
+    "#dda0dd",
+    "#b0c4de",
+    "#ffc700",
+    "#168ad0",
+    "#f1683c",
+    "#6D2932",
+    "#4fcf43",
+    "#c08b5c",
+  ];
+
   let formatNo = format(".1s");
+  let formatTime = timeFormat("%Y")
 
   onMount(async () => {
     let fetchedData = await csv("../../processed_weeks.csv", (data) => ({
@@ -46,6 +60,8 @@
     }));
     data = [...fetchedData];
   });
+
+
 
   const points = [
     { x: 1979, y: 7.19 },
@@ -220,7 +236,11 @@
     select(xAxis).selectAll("line").style("stroke", "white");
 
     select(yAxis)
+      .select("text.yLabel").remove()
+
+    select(yAxis)
       .append("text")
+      .attr("class", "yLabel")
       .attr("text-anchor", "end")
       .attr("y", 16)
       .attr("dx", "-3.25em")
@@ -230,13 +250,17 @@
       .style("fill", "white")
       .style("font-size", "1.25em");
 
-    select(yAxis)
+      select(xAxis)
+      .select("text.xLabel").remove();
+
+    select(xAxis)
       .append("text")
+      .attr("class", "xLabel")
       .attr("text-anchor", "end")
       .attr("x", width)
-      .attr("y", height)
+      .attr("y", 20)
       .attr("dx", "-3.25em")
-      .attr("dy", "-3.25em")
+      .attr("dy", "1.5px")
       .text("Time")
       .style("fill", "white")
       .style("font-size", "1.25em");
@@ -298,16 +322,31 @@
   $: vline.x2 = xScale1(point?.startDate);
 </script>
 
-<main>
+<main bind:clientWidth={width}>
   <p class="title">Sales</p>
   <div class="list">
-    <ul>
+    <table>
       {#each attributes as attribute, i}
-        <li>
-          <p>{capitalize(attribute.split(/(?=[A-Z])/)?.join(" ").toLowerCase())}</p>
-          <p>{point && point[attribute]}</p>
-        </li>{/each}
-    </ul>
+        <tr>
+          <td style="padding-right: 0.42em;">
+            <div style="background-color: {boxColors[i]};" class="box"></div>
+          </td>
+          <td>
+            <p style="padding-right: 1.2em;">
+              {capitalize(
+                attribute
+                  .split(/(?=[A-Z])/)
+                  ?.join(" ")
+                  .toLowerCase()
+              )}
+            </p></td
+          >
+          <td>
+            <p>{(point && point[attribute]) ?? 0}</p>
+          </td>
+        </tr>
+      {/each}
+    </table>
   </div>
   <div class="chart">
     <svg role="article" on:mousemove={handleMousemove} {width} {height}>
@@ -483,14 +522,14 @@
 
       <g transform="translate({margin.left}, 0)" bind:this={yAxis} />
 
+      <TooltipLine {vline} />
       {#each attributes as attribute, i}
         <TooltipPoint
           x={xScale1(point?.startDate)}
           y={yScale1(point && point[attribute])}
+          selected={selected === attribute}
         />
       {/each}
-
-      <TooltipLine {vline} />
     </svg>
 
     {#each attributes as attribute, i}
@@ -507,6 +546,11 @@
 </main>
 
 <style>
+  main{
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+  }
   .title {
     color: white;
     font-size: 1.25em;
@@ -593,10 +637,10 @@
   }
 
   .path-line4 {
-    stroke: rgb(22, 138, 208, 0.2);
+    stroke: rgb(109, 41, 50, 0.2);
   }
   .path-area4 {
-    fill: rgb(22, 138, 208);
+    fill: rgb(109, 41, 50);
   }
   #path-area4:hover {
     fill: rgb(22, 138, 208, 0.2);
@@ -648,18 +692,12 @@
   }
   .list {
     color: #f2f2f2;
-    font-size: 0.875em;
+    font-size: 0.675em;
+    display: flex;
   }
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .box {
+    width: 10px;
+    height: 10px;
+    margin-right: 2px;
   }
-  li {
-      
-    background-color: red;
-  }
-
 </style>
