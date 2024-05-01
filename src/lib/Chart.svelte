@@ -200,7 +200,7 @@
     formattedData = [...formattedData, ...child];
   }
 
-  let margin = { top: 25, right: 10, bottom: 75, left: 20 };
+  let margin = { top: 25, right: 10, bottom: 75, left: 30 };
 
   $: xScale1 = scaleTime()
     .domain([min(data, (d) => d.startDate), max(data, (d) => d.startDate)])
